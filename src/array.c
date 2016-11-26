@@ -581,10 +581,10 @@ enum cc_stat array_filter_mut(Array *ar, bool (*pred) (const void*))
 
     size_t rm   = 0;
     size_t keep = 0;
-
+    size_t i = ar->size - 1;
     /* Look for clusters of non matching elements before moving
      * in order to minimize the number of memmoves */
-    for (size_t i = ar->size - 1; i != ((size_t) - 1); i--) {
+    for (; i != ((size_t) - 1); i--) {
         if (!pred(ar->buffer[i])) {
             rm++;
             continue;
@@ -650,7 +650,8 @@ enum cc_stat array_filter(Array *ar, bool (*pred) (const void*), Array **out)
     filtered->mem_free   = ar->mem_free;
 
     size_t f = 0;
-    for (size_t i = 0; i < ar->size; i++) {
+    size_t i = 0;
+    for (; i < ar->size; i++) {
         if (pred(ar->buffer[i])) {
             filtered->buffer[f++] = ar->buffer[i];
             filtered->size++;
@@ -875,8 +876,8 @@ void array_reduce(Array *ar, void (*fn) (void*, void*, void*), void *result)
     }
     if (ar->size > 1)
         fn(ar->buffer[0], ar->buffer[1], result);
-
-    for (size_t i = 2; i < ar->size; i++)
+    size_t i = 2;
+    for (; i < ar->size; i++)
         fn(result, ar->buffer[i], result);
 }
 
